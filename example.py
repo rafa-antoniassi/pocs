@@ -8,3 +8,5 @@ def somar(a,b):   # espaçamento errado (black), vírgula sem espaço (flake8)
     
 
 somar(1,2)  # trailing whitespace  
+
+
