@@ -7,7 +7,9 @@ import sys
 def somar(a, b):  # espaçamento errado (black), vírgula sem espaço (flake8)
     logging.info(a + b)  # indentação errada (black),
     # uso de print (flake8-print)
-    logging.info("teste")  # uso de print (flake8-print)
+    logging.info(
+        "testeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    )  # uso de print (flake8-print)
 
 
 somar(1, 2)  # trailing whitespace
