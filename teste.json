@@ -1,5 +1,7 @@
 {
-    "nome": "Teste",
-    "idade": 20,
-    "ativo": true
+  "usuario": "Teste",
+  "tema": "claro",
+  "atalhos": {
+    "salvar": "Ctrl+S"
+  }
 }
