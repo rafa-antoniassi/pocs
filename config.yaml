@@ -1,0 +1,9 @@
+usuario: "Alice"
+tema: claro
+atalhos:
+  salvar: Ctrl+S
+  abrir: Ctrl+O
+
+# Arquivo YAML válido — validado por check-yaml
+# Adicione espaços no final de alguma linha se quiser ver o trailing-whitespace em ação
+# Falta de quebra de linha no final do arquivo será corrigida por end-of-file-fixer
