@@ -1,14 +1,17 @@
 async function send() {
-  const message = document.getElementById("message").value;
+  const nome = document.getElementById("nome").value;
+  const idade = document.getElementById("idade").value;
+  const obs = document.getElementById("obs").value;
 
-  // Obtem a chave pública
-const pubKey = await fetch("/public-key?ts=" + Date.now()).then(res => res.text());
+  const dataObj = { nome, idade, observacao: obs };
+  const dataStr = JSON.stringify(dataObj);
 
-  // Usa JSEncrypt para criptografar
+  const pubKey = await fetch("/public-key?ts=" + Date.now()).then((res) => res.text());
+
   const encryptor = new JSEncrypt();
   encryptor.setPublicKey(pubKey);
 
-  const encrypted = encryptor.encrypt(message);
+  const encrypted = encryptor.encrypt(dataStr);
 
   if (!encrypted) {
     alert("Erro ao criptografar.");
@@ -20,9 +23,13 @@ const pubKey = await fetch("/public-key?ts=" + Date.now()).then(res => res.text(
   const res = await fetch("/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
   const data = await res.json();
-  alert("Servidor respondeu: " + data.received);
+  if (data.received) {
+    alert("Servidor respondeu:\n" + JSON.stringify(data.received, null, 2));
+  } else {
+    alert("Erro: " + JSON.stringify(data));
+  }
 }

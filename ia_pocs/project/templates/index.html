@@ -1,11 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Formulário Seguro</title>
+  <meta charset="UTF-8" />
+  <title>Formulário Seguro RSA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 2rem auto;
+      background: #eef6f9;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 0 15px #a3c2ca;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #034f84;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #7fb5cc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #ffffff;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.75rem;
+      width: 100%;
+      background: #034f84;
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #023856;
+    }
+  </style>
 </head>
 <body>
-  <input type="text" id="message" placeholder="Digite algo">
+  <h2>Formulário Seguro RSA</h2>
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome" placeholder="Digite seu nome" />
+
+  <label for="idade">Idade:</label>
+  <input type="number" id="idade" placeholder="Digite sua idade" />
+
+  <label for="obs">Observação:</label>
+  <textarea id="obs" rows="4" placeholder="Escreva uma observação"></textarea>
+
   <button onclick="send()">Enviar</button>
 
   <script src="https://cdn.jsdelivr.net/npm/jsencrypt@3.0.0-rc.1/bin/jsencrypt.min.js"></script>
