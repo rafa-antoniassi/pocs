@@ -1,6 +1,5 @@
 import os
 import sqlite3
-
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -8,21 +7,20 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
 
 
-# Criação da tabela User (se não existir)
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS user (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE
-        );
     """
-    )
-    conn.commit()
-    conn.close()
+    Inicializa o banco de dados e cria a tabela de usuários se ela não existir.
+    """
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE
+            );
+        """)
+        conn.commit()
 
 
 init_db()
@@ -30,52 +28,58 @@ init_db()
 
 @app.route("/")
 def index():
+    """
+    Rota principal que exibe o formulário de cadastro de usuário.
+    """
     return render_template("form.html")
 
 
 @app.route("/users", methods=["POST"])
 def create_user():
-    name = request.form.get("name")
-    email = request.form.get("email")
+    """
+    Cria um novo usuário com os dados fornecidos no formulário.
+    Valida os campos e executa a inserção com segurança.
+    """
+    name = request.form.get("name", "").strip()
+    email = request.form.get("email", "").strip()
 
     if not name or not email:
         return "Campos obrigatórios: nome e e-mail", 400
 
     try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        # INSERÇÃO VULNERÁVEL (sem parâmetros)
-        cursor.executescript(
-            f"""
-            INSERT INTO user (name, email) VALUES ('{name}', '{email}');
-        """
-        )
-        conn.commit()
-        conn.close()
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO user (name, email) VALUES (?, ?);",
+                (name, email)
+            )
+            conn.commit()
         return f"Usuário {name} criado com sucesso!"
+    except sqlite3.IntegrityError:
+        return "E-mail já cadastrado.", 400
     except Exception as e:
         return f"Erro: {e}", 500
 
 
 @app.route("/search")
 def search_user():
-    q = request.args.get("q", "")
+    """
+    Realiza a busca por usuários com base na query string 'q'.
+    Utiliza LIKE com parâmetro para evitar SQL Injection.
+    """
+    q = request.args.get("q", "").strip()
     results = []
     error = None
 
     try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        if q:
-            # Consulta com filtro - vulnerável para testes
-            cursor.executescript(f"SELECT * FROM user WHERE name LIKE '%{q}%';")
-            cursor.execute(f"SELECT * FROM user WHERE name LIKE '%{q}%'")
-        else:
-            # Consulta sem filtro: traz todos os usuários
-            cursor.executescript("SELECT * FROM user;")
-            cursor.execute("SELECT * FROM user")
-        results = cursor.fetchall()
-        conn.close()
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            if q:
+                cursor.execute("SELECT * FROM user WHERE name LIKE ?", (f"%{q}%",))
+            else:
+                cursor.execute("SELECT * FROM user")
+            results = cursor.fetchall()
     except Exception as e:
         error = str(e)
 
