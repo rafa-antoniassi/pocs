@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Buscar Usuários</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            padding: 2rem;
+        }
+        .search-box {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            width: calc(100% - 1rem);
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 0.6rem;
+            background-color: #3498db;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .error {
+            color: red;
+            margin-top: 1rem;
+        }
+        .link-home {
+            display: block;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .link-home:hover {
+            text-decoration: underline;
+        }
+
+        /* Grid para os usuários */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .user-card {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            transition: box-shadow 0.2s ease;
+        }
+        .user-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .user-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+        .user-email {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-box">
+        <h2>Buscar Usuários</h2>
+        <form method="GET" action="/search">
+            <input
+                type="text"
+                name="q"
+                placeholder="Digite o nome"
+                value="{{ q|default('') }}"
+                autofocus
+            />
+            <button type="submit">Buscar</button>
+        </form>
+
+        {% if error %}
+            <p class="error">Erro: {{ error }}</p>
+        {% endif %}
+
+        {% if results %}
+            <div class="user-grid">
+                {% for user in results %}
+                    <div class="user-card">
+                        <div class="user-name">{{ user[1] }}</div>
+                        <div class="user-email">{{ user[2] }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elif q %}
+            <p>Nenhum resultado encontrado para "{{ q }}".</p>
+        {% else %}
+            <p>Lista de todos os usuários cadastrados:</p>
+            <div class="user-grid">
+                {% for user in results %}
+                    <div class="user-card">
+                        <div class="user-name">{{ user[1] }}</div>
+                        <div class="user-email">{{ user[2] }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <a href="/" class="link-home">Voltar ao cadastro</a>
+    </div>
+</body>
+</html>
