@@ -7,8 +7,10 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
 
 
-# Criação da tabela User (se não existir)
 def init_db():
+    """
+    Inicializa o banco de dados e cria a tabela de usuários se ela não existir.
+    """
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -26,11 +28,18 @@ init_db()
 
 @app.route("/")
 def index():
+    """
+    Rota principal que exibe o formulário de cadastro de usuário.
+    """
     return render_template("form.html")
 
 
 @app.route("/users", methods=["POST"])
 def create_user():
+    """
+    Cria um novo usuário com os dados fornecidos no formulário.
+    Valida os campos e executa a inserção com segurança.
+    """
     name = request.form.get("name", "").strip()
     email = request.form.get("email", "").strip()
 
@@ -40,7 +49,6 @@ def create_user():
     try:
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
-            # INSERÇÃO SEGURA
             cursor.execute(
                 "INSERT INTO user (name, email) VALUES (?, ?);",
                 (name, email)
@@ -55,6 +63,10 @@ def create_user():
 
 @app.route("/search")
 def search_user():
+    """
+    Realiza a busca por usuários com base na query string 'q'.
+    Utiliza LIKE com parâmetro para evitar SQL Injection.
+    """
     q = request.args.get("q", "").strip()
     results = []
     error = None
